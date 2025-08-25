@@ -14,7 +14,7 @@
 4) `arp -a` ile ARP önbelleği.
 
 ## Kanıtlar
-- Ping: ![ping]
+- Ping: ![ping](../diagrams/w1-lab1-ping.png)
 - ARP: ![arp](../diagrams/w1-lab1-arp_-a.png)
 
 ## Bulgular
