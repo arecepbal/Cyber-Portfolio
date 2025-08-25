@@ -14,8 +14,8 @@
 4) `arp -a` ile ARP önbelleği.
 
 ## Kanıtlar
-- Ping: ![ping])
-- ARP: ![arp]
+- Ping: ![ping]
+- ARP: ![arp]  (month01-network-fundamentals/diagrams/m1-w1-lab-(arp -a).png)
 
 ## Bulgular
 - Ping başarılı; ARP’de 192.168.1.11 ↔ MAC eşleşmesi var.
