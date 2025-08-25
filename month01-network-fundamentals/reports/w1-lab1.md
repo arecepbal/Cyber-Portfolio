@@ -14,8 +14,8 @@
 4) `arp -a` ile ARP önbelleği.
 
 ## Kanıtlar
-- Ping: ![ping][Uploading m1-w1-lab-(ipconfig).png…]()
-- ARP: ![arp](../diagrams/w1-lab1-arp.png)!
+- Ping: ![ping])
+- ARP: ![arp]
 
 ## Bulgular
 - Ping başarılı; ARP’de 192.168.1.11 ↔ MAC eşleşmesi var.
