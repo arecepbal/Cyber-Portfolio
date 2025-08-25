@@ -1,0 +1,6 @@
+- latency — gecikme
+- bandwidth — bant genişliği
+- packet — paket
+- router — yönlendirici
+- switch — anahtar
+- throughput — geçiş/etkin hız
