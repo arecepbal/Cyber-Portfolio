@@ -6,6 +6,7 @@
 ## IP Planı
 - PC0: 192.168.1.10/24
 - PC1: 192.168.1.11/24
+- PC2: 192.168.1.12/24
 
 ## Adımlar
 1) Cihazlar bağlandı (Copper Straight-Through).
