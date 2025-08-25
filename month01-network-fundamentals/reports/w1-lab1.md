@@ -18,6 +18,7 @@
 - Ping: ![ping](../diagrams/w1-lab1-ping.png)
 - ARP: ![arp](../diagrams/w1-lab1-arp_-a.png)
 
+-(../labs/.w1-lab1-basic-lan.pkt)
 ## Bulgular
 - Ping başarılı; ARP’de 192.168.1.11 ↔ MAC eşleşmesi var.
 
