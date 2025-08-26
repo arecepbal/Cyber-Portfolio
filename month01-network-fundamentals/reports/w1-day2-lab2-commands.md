@@ -5,7 +5,7 @@
 **Setup:** PT , 2960 switch, 3×PC. IP: .10/.11/.12 (/24), gateway yok
 
 ## Evidence
-- ipconfig: ![ipconfig](../diagrams/w1-ipconfig.png)
+- ipconfig: ![ipconfig](../diagrams/w1-lab2-ipconfig.png)
 - ping:     ![ping](../diagrams/w1-ping.png)
 - arp -a:   ![arp](../diagrams/w1-arp-table.png)
 - (opt) tracert: ![tr](../diagrams/w1-tracert.png)
