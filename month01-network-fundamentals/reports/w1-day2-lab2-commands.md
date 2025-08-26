@@ -6,11 +6,10 @@
 
 ## Evidence
 - ipconfig: ![ipconfig](../diagrams/w1-lab2-ipconfig.png)
-- ping:     ![ping](../diagrams/w1-ping.png)
-- arp -a:   ![arp](../diagrams/w1-arp-table.png)
-- (opt) tracert: ![tr](../diagrams/w1-tracert.png)
-- Simulation: ![sim](../diagrams/w1-sim-steps.png)
-- Packet Tracer: [w1-lab1-basic-lan.pkt](../labs/w1-lab1-basic-lan.pkt)
+- ping:     ![ping](../diagrams/w1-lab2-ping1.png)
+- arp -a:   ![arp](../diagrams/w1-lab2-arp.png)
+- tracert: ![tr](../diagrams/w1-lab2-tracert.png)
+- Simulation: ![sim](../diagrams/w1-lab2-simulation1-arp,ıcmp.png)
 
 ## Findings
 - İlk ping maximum ARP cache yüzünden; sonraki pingler daha hızlı
