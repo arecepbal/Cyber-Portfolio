@@ -12,10 +12,13 @@
 - Simulation: ![sim](../diagrams/w1-lab2-simulation1-arp,ıcmp.png)
 
 ## Findings
-- İlk ping maximum ARP cache yüzünden; sonraki pingler daha hızlı
+- İlk ping ARP cache yüzünden uzun sürdü; sonraki pingler daha hızlı
 - ARP tablosunda .11 ve .12 için MAC eşleşmeleri oluştu, arp -a ile command promptda görüldü
 - arp -d sonrası arp -a da MAC yok, No ARP Entries Found çıktısı.
 - tracert commandda arada router olmadığı için tek hop ile PC0 PC2 ye ulaştı
 - PDI ınformatoın kısmındaki OSI layersda ARP kısmında destination kısmı broad cast ve PC1 in MAC adresi gözükmüyorken,
 ICMP kısmında destination kısmında PC1'in IP nin adresi ve  MAC adresi görünüyordu
 
+## Nots
+- 255.255.255.0 /24 e denk geliyor diğerlerinede baktım
+- ARP atıldığında broatcast yayınlıyor switch, PC ARP sayesinde MAC i öğrendinmi unicast iletiyor
