@@ -1,12 +1,7 @@
 # W1 - Lab 1: Basic LAN (1 switch + 2 PC)
 
 **Amaç:** Aynı LAN’da iki PC’yi konuşturmak; ping ve ARP gözlemi.
-**Ortam:** Packet Tracer 8.x, Switch-2960, PC0, PC1.
-
-## IP Planı
-- PC0: 192.168.1.10/24
-- PC1: 192.168.1.11/24
-- PC2: 192.168.1.12/24
+**Ortam:** Packet Tracer, Switch-2960, PC0, PC1.
 
 ## Adımlar
 1) Cihazlar bağlandı (Copper Straight-Through).
