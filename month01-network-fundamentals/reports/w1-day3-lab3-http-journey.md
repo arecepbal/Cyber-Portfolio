@@ -18,7 +18,9 @@
 - ![syn](../diagrams/w1-lab3-TCP.png)
 - ![get](../diagrams/w1-lab3-HTTP.png)
 - ![browser](../diagrams/w1-lab3-browser.png)
-
+-| SYN (0x02) | SYN/ACK (0x12) | ACK (0x10) |
+|---                                                  |---                                                     |---                                                  |
+| <img src="../diagrams/w1-lab3-syn.png" width="300"> | <img src="../diagrams/w1-lab3-synack.png" width="300"> | <img src="../diagrams/w1-lab3-ack.png" width="300"> |
 ## Findings
 - HTTP trafiği **TCP üzerinde** çalışır: önce **3-Way Handshake (L4)**, sonra **HTTP (L7)**.
 - İletim başlamadan önce aynı LAN’da **ARP (L2)** gerçekleşti.
@@ -29,4 +31,4 @@
 - Yanlışlıkla **https** yazarsan çalışmaz (sertifika/443 yok).
 - Filtrede TCP/HTTP kapalıysa Event List görünmez.
 - DNS üzerinden de IP üzerinden de iletişim kurulabilir
-- 
+- **3-Way Handshake** de SYN,SYN/ACK,ACK sırası izlenir,bu 3 duruumda farklı binaryler gönderilir
