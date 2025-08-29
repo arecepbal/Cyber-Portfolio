@@ -104,12 +104,15 @@ Aşağıdaki dosyaları **diagrams/** klasörüne koyup bu raporda referansladı
   <img src="../diagrams/w1-lab4-PC0-nslookup-output.png" alt="nslookup output" width="49%">
 </p>
 -nsB yi kaydetmedim
-![httpA](../diagrams/w1-lab2-httpA-browser.png)
-![httpB](../diagrams/w1-lab2-httpB-browser.png)
+<p>
+  <img src="../diagrams/w1-lab4-httpb-browser-fromPC1.png" alt="HTTP browser" width="49%">
+  <img src="../diagrams/w1-lab4-httpb-output-fromPC1.png" alt="HTTP output" width="49%">
+</p>
+
 ![flow](../diagrams/w1-lab2-events-lanA.png)
-![req](../diagrams/w1-lab2-http-request-details.png)
-![res](../diagrams/w1-lab2-http-response-details.png)
-![fin](../diagrams/w1-lab2-tcp-fin-ack.png)
+![HTTPreq](../diagrams/w1-lab4-http-request.png)
+![HTTPres](../diagrams/w1-lab4-http-response.png)
+![ops tcpfin](../diagrams/w1-lab4-flag-ackfin.png)
 
 ---
 
