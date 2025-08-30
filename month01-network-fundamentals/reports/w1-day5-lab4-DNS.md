@@ -76,44 +76,34 @@ Tek 2960 switch, her LAN’da 1 PC + 1 Server.
 
 Aşağıdaki dosyaları **diagrams/** klasörüne koyup bu raporda referansladım:
 
-- **DNS kayıt ekranları:**
-  - `w1-lab2-dnsA-add.png` (Server0 DNS kayıt listesi)
-  - `w1-lab2-dnsB-add.png` (Server1 DNS kayıt listesi)
-- **nslookup çıktıları:**
-  - `w1-lab2-nslookupA.png` (PC0 → siteA.local)
-  - `w1-lab2-nslookupB.png` (PC1 → siteB.local)
-- **Tarayıcı ekranları:**
-  - `w1-lab2-httpA-browser.png` (PC0)
-  - `w1-lab2-httpB-browser.png` (PC1)
-- **Simulation – akış:**
-  - `w1-lab2-events-lanA.png` (DNS → TCP → HTTP zinciri)
-- **HTTP PDU detayları:**
-  - `w1-lab2-http-request-details.png` (client→server; dst port 80)
-  - `w1-lab2-http-response-details.png` (server→client; src port 80, Content-Length)
-- **TCP kapanış ve seq/ack:**
-  - `w1-lab2-tcp-fin-ack.png` (Flags = 0x11 / 0x10)
-  - `w1-lab2-tcp-seq-ack-1.png` & `w1-lab2-tcp-seq-ack-2.png` (ardışık segmentler)
-
-> **PT projesi:** `labs/w1-lab2-two-mini-lans.pkt` (rapor altından linkli)
-
 **Rapor içi gömülü:**
 ![dnsA](../diagrams/w1-lab4-dnsA-add.png)
--dnsB yi kaydetmedim(ihtiyaç duymadım)
+
+**dnsB diagramını kaydetmedim**
+
 <p>
   <img src="../diagrams/w1-lab4-PC0-nslookup.png" alt="nslookup" width="49%">
   <img src="../diagrams/w1-lab4-PC0-nslookup-output.png" alt="nslookup output" width="49%">
 </p>
--nsB yi kaydetmedim
+<p align="center"><em>Şekil 2 – Solda: nslookup command. Sağda: nslookup output.</em></p>
+
+**nsB diagramını kaydetmedim**
+
 <p>
   <img src="../diagrams/w1-lab4-httpb-browser-fromPC1.png" alt="HTTP browser" width="49%">
   <img src="../diagrams/w1-lab4-httpb-output-fromPC1.png" alt="HTTP output" width="49%">
 </p>
+<p align="center"><em>Şekil 2 – Solda: HTTP Request (client→server). Sağda: HTTP Response (server→client).</em></p>
 
-![flow](../diagrams/w1-lab2-events-lanA.png)
-![HTTPreq](../diagrams/w1-lab4-http-request.png)
-![HTTPres](../diagrams/w1-lab4-http-response.png)
+<p>
+ <img src="../diagrams/w1-lab4-http-request.png" alt="HTTP browser" width="49%">
+  <img src="../diagrams/w1-lab4-http-response.png" alt="HTTP output" width="49%">
+  </p>
+<p align="center"><em>Şekil 2 – Solda: HTTP Request (client→server). Sağda: HTTP Response (server→client).</em></p>
+
+<a id="tcpfin"></a>
 ![ops tcpfin](../diagrams/w1-lab4-flag-ackfin.png)
-
+*finish TCP si: flag ACK/FİN*
 ---
 
 ## 6) Bulgular (Findings)
