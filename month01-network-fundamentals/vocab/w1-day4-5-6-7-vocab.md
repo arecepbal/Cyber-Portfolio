@@ -2,10 +2,10 @@
 
 | English Term (EN) | Terim (TR) | Sözcük Türü (POS) | IPA (UK) | Kısa Tanım | Örnek Cümle |
 |---|---|---|---|---|---|
-| segment | segment | isim | /ˈseɡ.mənt/ | Taşıma katmanında (özellikle TCP) verinin bölünmüş birimi. | Taşıma katmanı veriyi segmentlere böler. |
-| packet | paket | isim | /ˈpæk.ɪt/ | IP katmanında yönlendirilen veri birimi. | Yönlendiriciler paketleri IP adresine göre iletir. |
-| frame | çerçeve | isim | /freɪm/ | Veri Bağlantı katmanında iletilen kapsüllenmiş veri birimi. | Anahtarlar MAC adreslerini kullanarak çerçeveleri iletir. |
-| bits | bit(ler) | isim (çoğul) | /bɪts/ | Fiziksel katmanda iletilen 0 ve 1’lerin akışı. | Kabloda çerçeveler bit akışına dönüşür. |
+| segment | segment | isim | /ˈseɡ.mənt/ | **Transport katmanında (özellikle TCP)** verinin bölünmüş birimi. | Taşıma katmanı veriyi segmentlere böler. |
+| packet | paket | isim | /ˈpæk.ɪt/ | **IP katmanında** yönlendirilen veri birimi. | Yönlendiriciler paketleri IP adresine göre iletir. |
+| frame | çerçeve | isim | /freɪm/ | **Data Lınk** katmanında iletilen kapsüllenmiş veri birimi. | Anahtarlar MAC adreslerini kullanarak çerçeveleri iletir. |
+| bits | bit(ler) | isim (çoğul) | /bɪts/ | **Physical** katmanda iletilen 0 ve 1’lerin akışı. | Kabloda çerçeveler bit akışına dönüşür. |
 | encapsulation | kapsülleme | isim | /ɪnˌkæp.sjʊˈleɪ.ʃən/ | Verinin her katmanda kendi başlık (ve varsa sonluk) ile sarılması. | Her katman veriyi kendi başlığıyla kapsüller. |
 | decapsulation | çöz-kapsülleme | isim | /ˌdiː.kæp.sjʊˈleɪ.ʃən/ | Hedefte katman başlıklarının sırayla çıkarılması işlemi. | Hedefte, çöz-kapsülleme ile bu başlıklar kaldırılır. |
 | subnet | alt ağ | isim | /ˈsʌb.net/ | Bir IP ağının mantıksal olarak bölünmüş alt bölümü. | Sunucuları ayrı bir alt ağa ayırdık. |
