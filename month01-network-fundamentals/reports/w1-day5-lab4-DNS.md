@@ -16,6 +16,7 @@ Tek 2960 switch, her LAN’da 1 PC + 1 Server.
 |  | **Server1** | `192.168.1.34 / 255.255.255.224` | — | **DNS=On, HTTP=On** |
 
 > Not: **Router yok.** Bu nedenle **A LAN ↔ B LAN** çapraz erişim **yok**; her LAN **kendi içinde** çalışacak. (Bu, beklenen davranış.)
+> diğer lablardan farklı olarak PC lere **DNS server** IP si atadım
 
 ---
 
