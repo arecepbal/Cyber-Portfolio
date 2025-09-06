@@ -4,9 +4,9 @@
 |---|---|---|---|---|---|
 | `repeater` | tekrarlayıcı | noun | /ɹɪˈpiːtɚ/ | Zayıflayan sinyali yenileyip aynı hızda tekrar eden fiziksel katman cihazı. | A repeater regenerates and retimes the signal. |
 | `hub` | hub (çoklayıcı) | noun | /hʌb/ | Tüm portlara bitleri çoğaltan, paylaşımlı çakışma alanı oluşturan cihaz. | A hub repeats incoming bits to all other ports. |
-| `CSMA/CD` | CSMA/CD (taşıyıcı algıla-çoklu erişim/çakışma saptama) | noun | /ˌsiː ˌɛs ˌɛm ˌeɪ ˌsiː ˈdiː/ | Yarı çift yönlü, paylaşımlı ortamda çakışma yönetimi yöntemi (eski Ethernet). | Old Ethernet hubs used CSMA/CD to manage access. |
+| `CSMA/CD` | CSMA/CD (taşıyıcı algıla-çoklu erişim/çakışma saptama) | noun | /ˌsiː ˌɛs ˌɛm ˌeɪ ˌsiː ˈdiː/ | half-duplex, paylaşımlı ortamda çakışma yönetimi yöntemi (eski Ethernet). | Old Ethernet hubs used CSMA/CD to manage access. |
 | `collision` | çakışma | noun | /kəˈlɪʒən/ | İki istasyonun aynı anda aktarımı sonucu çerçevelerin bozulması. | Collisions occur on half-duplex shared media. |
-| `late collisions` | gecikmiş çakışmalar | noun (plural) | /leɪt kəˈlɪʒənz/ | Çerçevenin 512-bit sınırından sonra görülen çakışmalar; genelde kablo/duplex sorunu. | Late collisions often indicate a duplex or cabling problem. |
+| `late collisions` | gecikmiş çakışmalar | noun (plural) | /leɪt kəˈlɪʒənz/ | Çerçevenin 512-bit(64 byte) sınırından sonra görülen çakışmalar; genelde kablo/duplex sorunu. | Late collisions often indicate a duplex or cabling problem. |
 | `duplex` | çift yönlülük (duplex) | noun/adj. | /ˈduːˌplɛks/ | Aynı anda (full) veya sırayla (half) gönderme/alma modu. | Set the port to full duplex to avoid collisions. |
 | `half-duplex` | yarı çift yönlü | adj./noun | /ˌhæf ˈduːˌplɛks/ | Gönderme ve alma **aynı anda değil**, sırayla yapılır; çakışma riski vardır. | In half-duplex, devices cannot transmit and receive simultaneously. |
 | `full-duplex` | tam çift yönlü | adj./noun | /ˌfʊl ˈduːˌplɛks/ | Gönderme ve alma aynı anda yapılır; çakışmalar ortadan kalkar. | Full-duplex eliminates collisions on a switch port. |
@@ -22,8 +22,8 @@
 | `interface` | arayüz (port) | noun | /ˈɪntɚˌfeɪs/ | Cihazın ağ bağlantı noktası (örn. Gi0/1). | Shut/no-shut the interface to reset the link. |
 | `link up` | bağlantı kuruldu | noun phrase | /lɪŋk ʌp/ | Fiziksel bağlantı aktif. | The interface changed state to link up. |
 | `link down` | bağlantı koptu | noun phrase | /lɪŋk daʊn/ | Fiziksel bağlantı pasif/arıza. | After the cable was pulled, the link went down. |
-| `CRC` | döngüsel artıklık denetimi | noun | /ˌsiː ˌɑr ˌsiː/ | Çerçeve sonundaki hata denetimi alanı; hatalıysa düşürülür. | Rising CRC errors suggest cabling or interference issues. |
-| `input errors` | giriş hataları | noun (plural) | /ˈɪnˌpʊt ˈɛrərz/ | Arayüzün aldığı toplam hatalı çerçeveler (CRC, frame, overrun vb.). | The interface shows increasing input errors under load. |
+| `CRC` | döngüsel artıklık denetimi | noun | /ˌsiː ˌɑr ˌsiː/ | Frame sonundaki hata denetimi alanı(FCS); hatalıysa düşürülür. | Rising CRC errors suggest cabling or interference issues. |
+| `input errors` | giriş hataları | noun (plural) | /ˈɪnˌpʊt ˈɛrərz/ | Arayüzün(portun) aldığı toplam hatalı çerçeveler (CRC, frame, overrun vb.). | The interface shows increasing input errors under load. |
 | `jitter` | gecikme dalgalanması (jitter) | noun | /ˈdʒɪt̬ɚ/ | Gecikmenin zaman içindeki oynaklığı; ses/görüntü kalitesini bozar. | High jitter can break real-time voice quality. |
 | `goodput` | yararlı aktarım hızı | noun | /ˈɡʊdˌpʊt/ | Protokol başlıkları ve yeniden iletimler çıkarıldıktan sonra net uygulama hızı. | After overhead, the goodput was about 85 Mbps. |
 | `RTT (round-trip time)` | gidiş-dönüş süresi | noun | /ˌɑr tiː ˈtiː/ | Paketin hedefe gidip yanıtla geri dönme süresi. | The RTT to the server averaged 42 ms. |
