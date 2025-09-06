@@ -42,11 +42,9 @@
 
 6) ## Notes
 **10/100BASE-T (FastEthernet):**
--Eğerki iki tarafın hızı farklıysa direk link down
--Mismatch’te bir uç **half-duplex**, diğeri **full-duplex** çalıştığı için half tarafı **CSMA/CD** beklerken diğer uç aynı anda gönderim yapar;
-bu **gecikme dalgalanması (jitter)**, **yeniden iletimler** ve **CRC/late collision** sayaç artışlarına yol açar.(late collisions / collisions (half tarafta),CRC / input errors (full tarafta))
--İki taraf AUTO ise taraflar birbirine **FLP (Fast Link Pulse)**gönderir, birbirlerinin hız ve duplexlerini öğrenirler
-fakat taraflardan biri FORCE ye geçerse AUTO taraf direk 100/Half'e düşer.
+- Eğerki iki tarafın hızı farklıysa direk link down
+- Mismatch’te bir uç **half-duplex**, diğeri **full-duplex** çalıştığı için half tarafı **CSMA/CD** beklerken diğer uç aynı anda gönderim yapar;bu **gecikme dalgalanması (jitter)**, **yeniden iletimler** ve **CRC/late collision** sayaç artışlarına yol açar.(late collisions / collisions (half tarafta),CRC / input errors (full tarafta))
+- İki taraf AUTO ise taraflar birbirine **FLP (Fast Link Pulse)**gönderir, birbirlerinin hız ve duplexlerini öğrenirlerfakat taraflardan biri FORCE ye geçerse AUTO taraf direk 100/Half'e düşer.
 
 
 
