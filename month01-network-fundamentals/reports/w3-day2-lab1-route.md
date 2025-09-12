@@ -68,6 +68,19 @@ show ip route
 
 ## 3)Evidence
 
+![](../diagrams/w3-lab1-LAN-IP-assigment.png)
+![](../diagrams/w3-lab1-show-IP-route.png)
+![](../diagrams/w3-lab1-ping-fromLANA-toLANB.png)
+![](../diagrams/w3-lab1-ARP-at-PC0-LANA.png)
+![](../diagrams/w3-lab1-ARP-at-router-LANA.png)
+![](../diagrams/w3-lab1-ARP-at-router-LANB.png)
+![](../diagrams/w3-lab1-ARP-at-PC1-LANB.png)
+![](../diagrams/w3-lab1-ICMP-at-LANA.png)
+![](../diagrams/w3-lab1-ICMP-at-LANB.png)
+
+
+
+
 ## 4) Findings ve Nots
 - İki LAN, R1 üzerinde farklı L3 arayüzlerde tanımlandığı için **inter-LAN yönlendirme** sağlandı.
 - **Varsayılan statik rota (Null0)** yalnızca kavram göstermek içindir; gerçek senaryoda next-hop/çıkış arayüzü genellikle **edge/ISP** olur.
@@ -81,7 +94,7 @@ daha sonrasında bu ICMP routera geldiği zaman **source address** routerın LAN
 ---
 
 
-## 6) DoD (Definition of Done)
+## 5) DoD (Definition of Done)
 - [x] Her iki yönde ping kanıtı (A→B, B→A) eklendi
 - [x] Route tablosu ekran görüntüsü eklendi (**C** ve **S\*** satırları görünüyor)
 - [x] PT dosyası `lab/w3-lab1.pkt` repo’ya kondu
