@@ -2,7 +2,7 @@
 
 ![](../diagrams/w2-day4-phisical-and-logical-network.png)
 
-````markdown
+
 # VLAN • Access/Trunk/Native • Inter-VLAN Routing — **Kısa Rehber**  
 *(“Nedir?” → “Ne işe yarar?” → “Nerede kullanırım?” + “Nasıl kanıtlarım?”)*
 
