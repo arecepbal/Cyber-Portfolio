@@ -22,14 +22,19 @@
 
 
 4) ## Evidence
-- `diagram/screen_w2_hub-collision.png`
-- `diagram/screen_w2_switch-no-collision.png`
-- `diagram/screen_w2_duplex-normal-show-int.png`
-- `diagram/screen_w2_duplex-mismatch-show-int.png`
-- (ops.) `diagram/screen_w2_duplex-sim.png`
+**LABA:**
+![](../diagrams/w2-lab3a-hub-collasion.png)
+![](../w2-lab3a-ping-fromPC0.png)
+![](../diagrams/w2-lab3a-ping-fromPC1.png)
+![](../diagrams/w2-lab3a-switch-no-collasion.png)
+**LABB:**
+![](../diagrams/w2-lab3b-bandwidth-duplex-auto.png)
+![](../w2-lab3b-bandwidth-duplex-force.png)
+![](../diagrams/w2-lab3b-PC-switch-link-up.png)
+![](../diagrams/w2-lab3b-PC-switch-link-down.png)
 
 
-5) ## Findings
+6) ## Findings
 **LABA:**
 - HUB half/duplex olduğundan sistemde PC0 dan PC1 e ping gönderince collasions oluştu
 - Switch full/duplex olduğundan collasions oluşmadı
