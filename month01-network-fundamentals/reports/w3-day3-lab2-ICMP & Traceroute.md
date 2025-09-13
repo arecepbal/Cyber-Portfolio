@@ -19,9 +19,9 @@ ICMP/TTL davranışını kanıtlamak:
 - Server(Fa0) ↔ SW-B(Fa0/2)
 
 **IP Planı**
-- **LAN-A**: R1 Gi0/0 = `192.168.10.1/24`  | PC-A = `192.168.10.11/24`, **DG `192.168.10.1`**
-- **Transit**: R1 Gi0/1 = `10.0.12.1/30` | R2 Gi0/0 = `10.0.12.2/30`
-- **LAN-B**: R2 Gi0/1 = `192.168.20.1/24` | Server = `192.168.20.22/24`, **DG `192.168.20.1`**
+- **LAN-A**: R1 Gi0/0 = `192.168.10.1/24`  | PC-A = `192.168.10.10/24`, **DG `192.168.10.1`**
+- **Transit**: R1 Gi0/1 = `10.0.0.1/30` | R2 Gi0/0 = `10.0.0.2/30`
+- **LAN-B**: R2 Gi0/1 = `192.168.20.1/24` | Server = `192.168.20.100/24`, **DG `192.168.20.1`**
 
 **Statik Rotlar**
 - R1 → `ip route 192.168.20.0 255.255.255.0 10.0.12.2`
@@ -122,14 +122,13 @@ R1# ping 192.168.20.22 source 192.168.10.1
 
 ## 3) Evidence (kanıt dosyaları)
 
-* **Topoloji diyagramı:** `diagram/topology_w3.png`
-* **Traceroute çıktısı (PC):** `diagrams/screen_w3_tracert.png`
-* **Simulation PDU detayları:** `diagrams/screen_w3_icmp-events.png`
-
-  * **Outer ICMP:** **Type 11 (0x0B), Code 0** — R1/R2 → PC
-  * **Encapsulated ICMP:** **Type 8 (0x08), Code 0** — orijinal Echo başlığı
-  * **Hedefte:** **Type 0 (0x00), Code 0** — Echo Reply
-* (Ops) `show ip route` SS: `diagrams/screen_w3_route-table_R1.png`, `..._R2.png`
+![](../diagrams/w3-lab2-tracert.png)
+![](../diagrams/w3-lab2-ICMP-type8.png)
+![](../diagrams/w3-lab2-ICMP-type8-hex.png)
+![](../diagrams/w3-lab2-ICMP-type11.png)
+![](../diagrams/w3-lab2-ICMP-type11-hex.png)
+![](../diagrams/w3-lab2-ICMP-type0.png)
+![](../diagrams/w3-lab2-ICMP-type0-hex.png)
 
 ---
 
@@ -137,7 +136,6 @@ R1# ping 192.168.20.22 source 192.168.10.1
 
 * **TTL davranışı:** TTL her **router** hop’ında 1 azaldı; **TTL=0** olduğunda ara router **ICMP Time Exceeded** üretti.
 * **ICMP türleri:**
-
   * **Type 11 (0x0B), Code 0** = *TTL exceeded in transit* (hop kimliği için kullanılır).
   * **Type 8 (0x08), Code 0** = *Echo Request* (giden probe).
   * **Type 0 (0x00), Code 0** = *Echo Reply* (hedef yanıtı).
@@ -149,11 +147,9 @@ R1# ping 192.168.20.22 source 192.168.10.1
 
 ## 5) Notes
 
-* **Switch hop değildir:** TTL yalnızca **router**’larda azalır.
-* **Simulation filtresi şart:** ICMP/IPv4 açık değilse olayları kaçırırsın.
+* **Switch hop değildir:** TTL yalnızca **router**’larda azalır..
 * **Traceroute ≠ Ping:** `tracert` TTL’i 1’den başlatır; `ping` büyük TTL ile gider (genelde TTL bitmez).
-* **PT’de iki ICMP satırı normaldir:** Outer (11) + encapsulated original (8).
-* **Sorun giderme:** `show ip int brief` (up/up?), `show ip route` (rotalar tam?), PC/Server **DG** doğru mu?
+* **Routerdan PC ye dönüşteki ICMP satırı :** Outer (11) + encapsulated original (8).
 
 ---
 
@@ -161,7 +157,7 @@ R1# ping 192.168.20.22 source 192.168.10.1
 
 * [ ] Topoloji kuruldu ve IP planı uygulandı
 * [ ] PC-A ↔ Server **ping OK**
-* [ ] `tracert 192.168.20.22` ekran görüntüsü eklendi
+* [ ] `tracert 192.168.20.100` ekran görüntüsü eklendi
 * [ ] Simulation’da en az **1× Type 11** (router→PC) ve **1× Type 0** (hedef→PC) PDU detayı SS eklendi
 * [ ] Paket yorumu: TTL azalması, ICMP Type/Code açıklaması yazıldı
 * [ ] (Ops) `show ip route` ekran görüntüsü eklendi
