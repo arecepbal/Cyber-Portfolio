@@ -180,5 +180,3 @@ R1# ping 192.168.20.22 source 192.168.10.1
 
 ```
 
-> İstersen aynı yapıyı `.docx`/`.pdf` çıktı olarak da düzenleriz; ama bu Markdown, GitHub’ında direkt okunur + SS/artefact linkleriyle uyumlu.
-```
