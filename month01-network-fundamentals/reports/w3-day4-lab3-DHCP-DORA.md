@@ -161,32 +161,138 @@ end
 * [ ] (Ops.) **Helper kapalıyken başarısız**, açıkken başarılı karşılaştırması
 
 ---
+# DHCP — DORA Akışı ve DHCP Options (Kopyala-Yapıştır .md)
 
-## Appendix A — Hızlı Komut/Filtre Kopya Kağıdı
-
-**R1**
-
-```txt
-show ip interface brief
-show arp | include 192.168.10.
-show running-config | s interface g0/0
-```
-
-**Simulation Filters:** `DHCP`, `UDP`, `IPv4` (+ DNS için `DNS`)
-**UDP portları:** Client→Server **68→67**, Server→Client **67→68**
-**DHCP alanları:** `giaddr`, `yiaddr`, Options **1/3/6/50/53/54**
-**DNS:** **QTYPE=A**, **Answer=A web.local = 192.168.20.100**
+**Amaç:** DHCP’nin **DORA** (Discover → Offer → Request → Ack) akışında *paketlerde mutlaka/çoğu zaman görmen gereken alanlar* ile **DHCP Options** (kod → anlam) özetini tek sayfada toplamak.  
+**Not:** “MUST/SHOULD/OPTIONAL” ifadeleri RFC 2131/2132 mantığına göredir. Packet Tracer bazen opsiyon adını yazar (kodu göstermeyebilir); Wireshark hem isim hem kodu gösterir.
 
 ---
 
-## Appendix B — Sözlük (kısa)
+## DORA — Paket Alanları (Özet)
 
-* **DORA:** Discover, Offer, Request, Ack
-* **giaddr:** Relay IP (server’ın hangi subnet için pool seçtiğini belirler)
-* **yiaddr:** İstemciye teklif/atanan IP
-* **Option 1/3/6:** Subnet Mask / Default Gateway / DNS Server
-* **Server Identifier (54):** DHCP sunucusunun kimliği (genelde IP’si)
+### 1) **DHCPDISCOVER** (İstemci → **broadcast**, UDP **68→67**)
+**BOOTP/DHCP başlık alanları (zorunlu):**
+- `op=1` (request), `htype=1` (Ethernet), `hlen=6`
+- `xid` (transaction id), `secs`, `flags` (**0x8000** = broadcast biti)
+- `ciaddr=0.0.0.0`, `yiaddr=0`, `siaddr=0`
+- `chaddr` = istemci **MAC**
+- `giaddr` = **relay** IP (VARSA; istemciye yakın router ara yüzü)
+
+**Opsiyonlar:**
+- **53** = **1** (Message Type: Discover) — **MUST**
+- **55** (Parameter Request List) — **SHOULD** (genelde 1/3/6/51/…)
+- **61** (Client Identifier) — **SHOULD**
+- **12** (Host Name) — **OPTIONAL**
+- **50** (Requested IP) — **OPTIONAL** (INIT-REBOOT’ta)
+- **60** (Vendor Class) — **OPTIONAL**
 
 ---
 
+### 2) **DHCPOFFER** (Sunucu → istemci, UDP **67→68**)
+**Başlık:**
+- `op=2` (reply), `yiaddr` = **teklif edilen IP**
+- Relay varsa `giaddr` korunur.
 
+**Opsiyonlar:**
+- **53** = **2** (Offer) — **MUST**
+- **54** (Server Identifier) = sunucu IP — **MUST**
+- **1** (Subnet Mask), **3** (Router), **6** (DNS), **51** (Lease) — **SHOULD**
+- **58/59** (T1/T2) — **RECOMMENDED**
+- **15/119** (Domain/Domain Search), **121/249** (Classless Routes) — **OPTIONAL**
+
+---
+
+### 3) **DHCPREQUEST** (İstemci → **broadcast**, UDP **68→67**)
+**Varyantlar:** SELECTING (Offer seçimi), INIT-REBOOT, RENEWING/REBINDING
+
+**SELECTING (en yaygın):**
+- **53** = **3** (Request) — **MUST**
+- **50** (Requested IP) = teklif edilen IP — **MUST**
+- **54** (Server ID) = seçilen sunucu — **MUST**
+- `ciaddr=0.0.0.0` (IP henüz yok)
+
+**RENEWING/REBINDING:**
+- `ciaddr` = **mevcut IP** (doldurulur)
+- **50/54** olmayabilir (sunucu seçimi yapılmıyor; kira yenileniyor)
+
+---
+
+### 4) **DHCPACK** (Sunucu → istemci, UDP **67→68**)
+**Başlık:**
+- `op=2` (reply), `yiaddr` = **atanan IP**
+
+**Opsiyonlar:**
+- **53** = **5** (Ack) — **MUST**
+- **54** (Server ID) — **MUST**
+- **1/3/6/51** (Mask/GW/DNS/Lease) — **SHOULD**
+- **58/59**, **15/119**, **121/249** — **OPTIONAL**
+
+> **Not:** **DHCPNAK** (53=6) gelirse istemci başa döner (yeniden Discover).
+
+---
+
+## DHCP Options — Hızlı Sözlük (DEC & HEX)
+
+> Kodlar belgelerde genelde **DEC** yazılır; pakette 1-byte **HEX** görülür (ör. 53 dec = **0x35** hex).
+
+| Kod (dec) | Kod (hex) | Adı | Kısa açıklama |
+|---:|:---:|---|---|
+| **1** | 0x01 | Subnet Mask | Alt ağ maskesi (örn. 255.255.255.0) |
+| **3** | 0x03 | Router (Default GW) | Varsayılan ağ geçidi(leri) |
+| **6** | 0x06 | DNS Servers | DNS sunucuları |
+| **12** | 0x0C | Host Name | İstemci makine adı |
+| **15** | 0x0F | Domain Name | Yerel etki alanı adı |
+| **28** | 0x1C | Broadcast Address | Ağın yayın adresi |
+| **42** | 0x2A | NTP Servers | Zaman sunucuları |
+| **50** | 0x32 | Requested IP Address | İstenilen IP (REQUEST’te) |
+| **51** | 0x33 | Lease Time | Kira süresi (saniye) |
+| **52** | 0x34 | Option Overload | sname/file alanlarını opsiyonlar için kullan |
+| **53** | 0x35 | DHCP Message Type | 1=Discover, 2=Offer, 3=Request, 5=Ack, 6=Nak, 7=Release, 8=Inform |
+| **54** | 0x36 | Server Identifier | Sunucu kimliği (genelde IP) |
+| **55** | 0x37 | Parameter Request List | İstemcinin istediği opsiyon listesi |
+| **56** | 0x38 | Message | İnsan tarafından okunur metin/hata |
+| **57** | 0x39 | Maximum DHCP Msg Size | Maksimum mesaj boyutu |
+| **58** | 0x3A | T1 (Renewal Time) | Yenileme başlangıcı |
+| **59** | 0x3B | T2 (Rebinding Time) | Yeniden bağlanma süresi |
+| **60** | 0x3C | Vendor Class ID | Örn. “MSFT 5.0” |
+| **61** | 0x3D | Client Identifier | İstemci kimliği (çoğunlukla MAC tabanlı) |
+| **66** | 0x42 | TFTP Server Name | PXE/boot |
+| **67** | 0x43 | Bootfile Name | Boot imaj dosyası |
+| **82** | 0x52 | Relay Agent Info | Option 82 (Circuit-Id, Remote-Id) |
+| **119** | 0x77 | Domain Search | DNS arama dizisi |
+| **121** | 0x79 | Classless Static Routes | RFC3442, sınıfsız rota listesi |
+| **249** | 0xF9 | MS Classless Routes | MS varyant (121 ile benzer) |
+| **0** | 0x00 | Pad | Dolgu (değer yok) |
+| **255** | 0xFF | End | Opsiyonların sonu |
+
+---
+
+## “Decimal mi, Hex mi?” — Hızlı Notlar
+- Doküman/konfig: **DEC** (53, 54…).  
+- Paket içi byte alanı: **HEX** (53 → **0x35**, 54 → **0x36**, 50 → **0x32**…).  
+- **Wireshark** iki biçimi de gösterir: *“Option: (53) DHCP Message Type”*.  
+- **Packet Tracer** bazen yalnızca adını gösterir (kod görünmeyebilir).
+
+**Mini dönüşüm kopyası:**  
+`1→0x01, 3→0x03, 6→0x06, 50→0x32, 51→0x33, 52→0x34, 53→0x35, 54→0x36, 55→0x37, 56→0x38, 57→0x39, 58→0x3A, 59→0x3B, 82→0x52, 119→0x77, 121→0x79, 249→0xF9, 255→0xFF`
+
+---
+
+## PDU Kontrol “Kopya Kâğıdı” (Lab’a koymalık)
+
+- **Discover:** `op=1`, `ciaddr=0`, `chaddr=MAC`, `giaddr=<relay IP (varsa)>`, `53=1`, `55=…`  
+- **Offer:** `op=2`, `yiaddr=<teklif IP>`, `53=2`, `54=<server IP>`, `1/3/6/51/58/59 (varsa)`  
+- **Request (Selecting):** `op=1`, `ciaddr=0`, `53=3`, `50=<offered IP>`, `54=<server ID>`  
+- **Ack:** `op=2`, `yiaddr=<atanan IP>`, `53=5`, `54=<server ID>`, `1/3/6/51/58/59 (varsa)`  
+- **Relay varsa:** `giaddr` her cevapta korunur; sunucu **giaddr**’a göre doğru havuzu seçer.
+
+---
+
+## Wireshark/Filtre İpuçları
+- **Tüm DHCP/BOOTP:** `bootp`  
+- **Yalnızca Discover:** `bootp.option.dhcp == 1`  
+- **Yalnızca Offer:** `bootp.option.dhcp == 2`  
+- **Yalnızca Request:** `bootp.option.dhcp == 3`  
+- **Yalnızca Ack:** `bootp.option.dhcp == 5`
+
+> **Hatırla:** DORA yayın (broadcast) adımlarında L2’de **ff:ff:ff:ff:ff:ff**, L3’te **255.255.255.255** görürsün; relay (Option 82/`giaddr`) kullanıyorsan yayınlar segment/relay mantığıyla taşınır.
