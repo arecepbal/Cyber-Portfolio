@@ -122,3 +122,190 @@
 - [ ] **NAT-T durumu** (var/yok) belirtildi  
 - [ ] **TS_i/TS_r** (Traffic Selectors) okundu ve rapora yazıldı  
 - [ ] Gizlilik alanları **maskelendi**
+
+     
+---
+
+# IKEv2: Baştan sona ne olur?
+
+## 0) Oyuncular ve kavramlar
+
+* **Initiator (başlatan)** ↔ **Responder (yanıtlayan)**
+* **IKE SA**: IKEv2 kontrol kanalı için güvenli oturum (INIT/AUTH mesajları buradan gider).
+* **CHILD SA**: Asıl veri şifrelemesini taşıyan oturum(lar) (tipik olarak **ESP**; iki yön için iki **SPI**).
+* **NAT-T**: NAT varsa IKE/ESP, **UDP/4500** içine kapsüllenerek gider.
+* **PFS**: Perfect Forward Secrecy—her oturum için taze (ephemeral) DH; yakalama dosyasıyla sonradan “kırmayı” engeller.
+
+---
+
+## 1) IKE\_SA\_INIT (Exchange Type = 34) — “kripto temeli atılır”
+
+**Amaç:** Taraflar kripto algoritmalarını uzlaşır, DH ile ortak sır üretir, NAT var mı anlar.
+
+### 1.1 Pakette neler var?
+
+* **SA Teklifleri (Proposals/Transforms)**: Şifre (ENCR), bütünlük (INTEG), PRF, DH grubu (örn. **AES-GCM / PRF-SHA2-256 / DH-14**).
+* **KE (Key Exchange)**: Ephemeral **Diffie-Hellman** kamusal değeri.
+* **Nonce (Ni/Nr)**: Rastgelelik ve tazelik için.
+* **NAT Detection (NAT-D)**: “Arada NAT var mı?” hash tabanlı bildirimler.
+* (Opsiyonel) **Cookie**: DoS azaltmak için responder’ın istediği ekstra kanıt.
+
+**Bu mesajlar ŞİFRESİZ gider.** Yani Wireshark’ta SA/KE/Nonce/NAT-D alanlarını net görürsün.
+
+### 1.2 Kripto içerde nasıl işler? (özet formüller)
+
+1. Taraflar DH ile ortak sırrı üretir: `g^ir`
+2. **SKEYSEED** hesaplanır:
+   `SKEYSEED = prf(Ni | Nr, g^ir)`
+3. Buradan IKE SA için anahtarlar türetilir:
+   `SK_d | SK_ai | SK_ar | SK_ei | SK_er | SK_pi | SK_pr = prf+(SKEYSEED, Ni | Nr | SPIi | SPIr)`
+
+   * **SK\_e\***: IKE mesajlarını **şifreler**
+   * **SK\_a\***: IKE mesajlarını **imzalar/bütünlük**
+   * **SK\_p\***: **AUTH** hesaplarında kullanılır
+   * **SK\_d**: **CHILD SA** anahtar türetimi için
+
+> **Wireshark:** `ikev2 && (ikev2.exchange_type==34 or isakmp.exchange_type==34)`
+> NAT-T kanıtı başlangıçta çıkmayabilir; ama birazdan UDP/4500’a geçişle netleşir.
+
+---
+
+## 2) IKE\_AUTH (Exchange Type = 35) — “kimlik ispatı ve ilk CHILD SA”
+
+**Amaç:** Taraflar birbirini **kimlik doğrular**, **iç trafik** (TS) için yetki verir, **ilk CHILD SA**’yı kurar.
+
+### 2.1 Pakette neler var?
+
+Bu aşamadaki payload’lar **ŞİFRELİ**dir (INIT’te türetilen SK\_\* ile):
+
+* **IDi / IDr**: Kimlik (IP, FQDN, sertifika DN vb.)
+* **AUTH**: “El sıkışmayı ve kimliğimi biliyorum” ispatı (PSK / sertifika / EAP’e göre farklı hesaplanır ama **SK\_pi/SK\_pr** kullanır).
+* **SA (CHILD)**: Veri kanalı için ESP/AH teklifleri (pratikte ESP).
+* **TS\_i / TS\_r**: **Traffic Selectors**—tünelden hangi **iç IP/port/protokol** aralıkları geçecek.
+* (Opsiyonel) **CFG/CP**: Remote-access istemciye **tünel IP’si**, DNS vb. atamak için.
+* (Opsiyonel) **EAP**: Uzak erişimde ek kimlik doğrulama adımları.
+
+**Sonuç:** İlk **CHILD SA** kurulur → veri düzlemi **ESP** ile başlar.
+
+> **Wireshark:** `ikev2 && (ikev2.exchange_type==35 or isakmp.exchange_type==35)`
+> İçerikler **Encrypted** görünür—bu normal. Anahtar (key-log/statik keys) vermezsen ayrıntısı açılmaz.
+
+---
+
+## 3) Veri Düzlemi: ESP (proto 50) — “artık trafik şifreli”
+
+**Amaç:** Uygulama trafiği şifreli gider. İki yön için iki SPI vardır.
+
+### 3.1 Başlık ve görünürler
+
+* **ESP SPI** (Security Parameters Index) — görünür
+* **Sequence Number** — görünür (anti-replay)
+* **Encrypted Payload** — **görünmez** (iç IP başlığı + TCP/UDP veri burada şifreli)
+
+### 3.2 NAT varsa: NAT-T
+
+* IKE/ESP, **UDP/4500** içine konur → Wireshark “**ESP (UDP-encap)**” yazar.
+* Paketin başında **Non-ESP Marker: 0x00000000** görülür.
+* Başlangıçta 500/UDP hiç görülmeyebilir; bazı yığınlar doğrudan 4500’le başlar.
+
+> **Wireshark:** `esp` veya `udp.port==4500 && esp`
+> Yönleri ayır: `esp.spi == 0xAABBCCDD` (I→R), `esp.spi == 0xEEFF0011` (R→I)
+
+---
+
+## 4) Yaşam Döngüsü (IKEv2 bitti mi? Hayır—devam eder!)
+
+### 4.1 INFORMATIONAL (Exch=37) — “idare işleri”
+
+* **DPD/Liveness**: Karşı taraf canlı mı?
+* **DELETE**: Bir **CHILD SA** veya **IKE SA** kapatılır.
+* **NOTIFY**: Durum/uyarı iletileri. (Bu mesajlar çoğunlukla **Encrypted**’dır.)
+
+### 4.2 CREATE\_CHILD\_SA (Exch=36)
+
+* **CHILD SA rekey**: Veri anahtarlarını yenile.
+* **Yeni CHILD SA**: Yeni TS/algoritmalarla ek tüneller.
+* İsteğe bağlı yeni **DH** (PFS). Anahtarlar yine **SK\_d**’den türetilir.
+
+### 4.3 IKE SA rekey (Exch=36)
+
+* Tüm IKE SA tekrar kurulur (yeni SPIs). Eski IKE SA **DELETE** ile kapatılır.
+
+### 4.4 MOBIKE (opsiyonel)
+
+* IP/arayüz değişse de IKE SA ayakta kalır (ör. LTE→Wi-Fi geçişi).
+
+### 4.5 Yeniden iletim / Parçalama
+
+* **Retransmission**: Mesajlar kaybolursa aynı Message ID ile tekrar.
+* **IKEv2 Fragmentation**: Büyük IKE mesajları parçalara bölünür (UDP’de MTU sorunlarına çare).
+
+---
+
+## 5) Güvenlik özellikleri – “neden sonradan açamıyorum?”
+
+* **Ephemeral DH + PFS**: Oturum anahtarları uçlarda üretilir; pcap’ta **yoktur**.
+* **AUTH**: Kimlik + tüm el sıkışma transkriptini kriptografik bağ ile iliştirir (MITM engeli).
+* **Anti-replay**: ESP sequence ve pencere yönetimi.
+* **NAT-T**: NAT arkasında çalıştırır, güvenlik modelini bozmaz.
+* **Sertifika / PSK / EAP**: Farklı doğrulamalar; modern kurulumlarda **sertifika** veya güçlü PSK tercih edilir.
+
+---
+
+## 6) Wireshark’ta **nerede neyi** görürüm?
+
+| Aşama     | Filtre                          | Görünenler                                                | Görünmeyenler                                 |
+| --------- | ------------------------------- | --------------------------------------------------------- | --------------------------------------------- |
+| INIT (34) | `ikev2 && exch==34`             | SA teklifleri, **KE**, **Nonce**, (varsa) **NAT-D**       | —                                             |
+| AUTH (35) | `ikev2 && exch==35`             | **Encrypted** başlık; sadece Exchange/Flags/MsgID görünür | **IDi/IDr, AUTH, TS** (anahtar yoksa açılmaz) |
+| ESP       | `esp` / `udp.port==4500 && esp` | **SPI**, **Seq**, (NAT-T’de Non-ESP Marker)**             | **Inner IP + üst katman veri**                |
+| NAT-T     | `udp.port==4500 && esp`         | UDP/4500 kapsül, Non-ESP marker                           | —                                             |
+| INFO (37) | `ikev2 && exch==37`             | Başlık, Flags; çoğunlukla **Encrypted** payload           | İçerik (DPD/DELETE)                           |
+
+> **exch==XX** için alan adı sürüme göre `ikev2.exchange_type` veya `isakmp.exchange_type` olabilir.
+
+---
+
+## 7) En sık sorular (çok net cevaplar)
+
+**Inner IP’ler neden görünmüyor?**
+→ **ESP payload** içindeler ve **şifreli**. Anahtar yoksa açılmaz.
+
+**PSK’yi bilirsem açar mıyım?**
+→ IKEv2’de **ephemeral DH** var. Sadece PSK yetmez; oturum anahtarları için DH gizlileri gerekir.
+
+**NAT mı NAT-D mi NAT-T mi?**
+
+* **NAT**: Çevirenin kendisi.
+* **NAT-D**: “NAT var mı?” algısı (INIT’te Notify).
+* **NAT-T**: Çalışma yöntemi (ESP’yi **UDP/4500** içine koy).
+
+**Exchange Type sayıları?**
+`34=IKE_SA_INIT`, `35=IKE_AUTH`, `36=CREATE_CHILD_SA`, `37=INFORMATIONAL`.
+
+**Flags (Bayraklar) kısa okuma?**
+`0x08=Initiator`, `0x20=Response`, `0x00=Responder-Request`, `0x28=Initiator-Response`.
+
+---
+
+## 8) Kopyala-yapıştır mini akış (3 satırda “tüm IKEv2”)
+
+1. **INIT (34):** ENCR/INTEG/PRF/DH pazarlık + **DH**, **Nonce**, (varsa) **NAT-D** → `SKEYSEED` ve **SK\_**\* anahtarları türetilir.
+2. **AUTH (35):** **IDi/IDr**, **AUTH**, **TS\_i/TS\_r** (şifreli) → **ilk CHILD SA** kurulur.
+3. **ESP:** Veri şifreli akar (NAT varsa **UDP/4500** + **Non-ESP Marker**). Devamında **CREATE\_CHILD\_SA (36)** ile rekey/ek tünel, **INFORMATIONAL (37)** ile DPD/DELETE.
+
+---
+
+## 9) “Gerçekte cihazda ne olur?” (paketin ötesi)
+
+* Cihaz, seçilen algoritmalara göre **HW hızlandırma (AES-NI/crypto ASIC)** kullanır.
+* **Anti-replay penceresi** ve **lifetime (zaman/byte)** sayaçları CHILD SA için izlenir; dolunca **rekey** tetiklenir.
+* **Policy/ACL (proxy-id)** TS ile uyumlu değilse trafik düşer (drop/no matching SA).
+* **Log** tarafında INIT/AUTH/DPD/Delete kayıtları vardır; sorun giderirken onlar hakemdir.
+
+---
+
+### Son söz
+
+IKEv2’nin özü: **INIT** ile kripto temeli, **AUTH** ile kimlik + yetki + ilk veri tüneli, sonrası **ESP** ile şifreli trafik ve yaşam döngüsü yönetimi (**CREATE\_CHILD\_SA/INFORMATIONAL**). Wireshark’ta başlıklar ve SPI’lar görünür; **içerik şifreli** olduğu için normalde görünmez. Anahtar (veya cihazdan “decryption secrets”) olmadan pcap’tan “iç IP ve uygulama” verisi çıkarılamaz—tasarım gereği böyledir.
+
